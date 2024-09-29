@@ -1,0 +1,966 @@
+CODE 1
+import tkinter as tk
+from tkinter import messagebox
+
+# Stack Class
+class Stack:
+    def __init__(self):
+        self.items = []
+
+    def is_empty(self):
+        return len(self.items) == 0
+
+    def push(self, data):
+        self.items.append(data)
+
+    def pop(self):
+        if self.is_empty():
+            return None
+        return self.items.pop()
+
+    def peek(self):
+        if self.is_empty():
+            return None
+        return self.items[-1]
+
+    def size(self):
+        return len(self.items)
+
+# Queue Class
+class Queue:
+    def __init__(self):
+        self.queue = []
+
+    def is_empty(self):
+        return len(self.queue) == 0
+
+    def enqueue(self, item):
+        self.queue.append(item)
+
+    def dequeue(self):
+        if self.is_empty():
+            return None
+        return self.queue.pop(0)
+
+# Priority Queue Class
+class PriorityQueue:
+    def __init__(self):
+        self.pqueue = []
+
+    def is_empty(self):
+        return len(self.pqueue) == 0
+
+    def insert(self, item, priority):
+        self.pqueue.append((priority, item))
+        self.pqueue.sort(reverse=True)
+
+    def dequeue(self):
+        if self.is_empty():
+            return None
+        return self.pqueue.pop()[1]
+
+# Singly Linked List and Node class
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+class SinglyLinkedList:
+    def __init__(self):
+        self.head = None
+
+    def is_empty(self):
+        return self.head is None
+
+    def insert_at_beginning(self, data):
+        new_node = Node(data)
+        new_node.next = self.head
+        self.head = new_node
+
+    def insert_at_end(self, data):
+        new_node = Node(data)
+        if self.is_empty():
+            self.head = new_node
+            return
+        current = self.head
+        while current.next:
+            current = current.next
+        current.next = new_node
+
+    def delete_at_beginning(self):
+        if self.is_empty():
+            return None
+        deleted_node = self.head
+        self.head = self.head.next
+        return deleted_node.data
+
+    def delete_at_end(self):
+        if self.is_empty():
+            return None
+        if self.head.next is None:
+            deleted_node = self.head
+            self.head = None
+            return deleted_node.data
+        current = self.head
+        while current.next.next:
+            current = current.next
+        deleted_node = current.next
+        current.next = None
+        return deleted_node.data
+
+# Doubly Linked List Class
+class DNode:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+        self.prev = None
+
+class DoublyLinkedList:
+    def __init__(self):
+        self.head = None
+
+    def is_empty(self):
+        return self.head is None
+
+    def insert_at_beginning(self, data):
+        new_node = DNode(data)
+        if self.head is None:
+            self.head = new_node
+        else:
+            new_node.next = self.head
+            self.head.prev = new_node
+            self.head = new_node
+
+    def insert_at_end(self, data):
+        new_node = DNode(data)
+        if self.is_empty():
+            self.head = new_node
+        else:
+            current = self.head
+            while current.next:
+                current = current.next
+            current.next = new_node
+            new_node.prev = current
+
+    def delete_at_beginning(self):
+        if self.is_empty():
+            return None
+        deleted_node = self.head
+        self.head = self.head.next
+        if self.head:
+            self.head.prev = None
+        return deleted_node.data
+
+    def delete_at_end(self):
+        if self.is_empty():
+            return None
+        current = self.head
+        if current.next is None:
+            self.head = None
+            return current.data
+        while current.next:
+            current = current.next
+        current.prev.next = None
+        return current.data
+
+# GUI class
+class DataStructureGUI:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Data Structures GUI")
+        self.root.geometry("800x800")
+        self.root.configure(bg="#f0f8ff")  # Light background color
+        
+        # Initialize Data Structures
+        self.stack = Stack()
+        self.queue = Queue()
+        self.priority_queue = PriorityQueue()
+        self.singly_linked_list = SinglyLinkedList()
+        self.doubly_linked_list = DoublyLinkedList()
+        
+        # Title Label
+        self.title_label = tk.Label(self.root, text="Data Structures Operations", font=("Arial", 20), bg="#f0f8ff")
+        self.title_label.pack(pady=20)
+        
+        # Stack Frame
+        self.stack_frame = tk.Frame(self.root, bg="#e6e6fa")  # Lavender background for stack frame
+        self.stack_frame.pack(pady=10)
+        
+        self.stack_label = tk.Label(self.stack_frame, text="Stack", font=("Arial", 14), bg="#e6e6fa")
+        self.stack_label.grid(row=0, column=0, columnspan=3)
+        
+        self.stack_entry = tk.Entry(self.stack_frame)
+        self.stack_entry.grid(row=1, column=0, padx=10)
+        
+        self.stack_push_btn = tk.Button(self.stack_frame, text="Push", command=self.stack_push, bg="#add8e6")  # Light blue
+        self.stack_push_btn.grid(row=1, column=1, padx=10)
+        
+        self.stack_pop_btn = tk.Button(self.stack_frame, text="Pop", command=self.stack_pop, bg="#ffcccb")  # Light coral
+        self.stack_pop_btn.grid(row=1, column=2, padx=10)
+        
+        self.stack_peek_btn = tk.Button(self.stack_frame, text="Peek", command=self.stack_peek, bg="#98fb98")  # Pale green
+        self.stack_peek_btn.grid(row=2, column=0, padx=10)
+        
+        self.stack_size_btn = tk.Button(self.stack_frame, text="Size", command=self.stack_size, bg="#98fb98")  # Pale green
+        self.stack_size_btn.grid(row=2, column=1, padx=10)
+        
+        self.stack_display = tk.Label(self.stack_frame, text="", bg="#e6e6fa")
+        self.stack_display.grid(row=3, column=0, columnspan=3)
+        
+        # Queue Frame
+        self.queue_frame = tk.Frame(self.root, bg="#e6e6fa")  # Lavender background for queue frame
+        self.queue_frame.pack(pady=10)
+        
+        self.queue_label = tk.Label(self.queue_frame, text="Queue", font=("Arial", 14), bg="#e6e6fa")
+        self.queue_label.grid(row=0, column=0, columnspan=3)
+        
+        self.queue_entry = tk.Entry(self.queue_frame)
+        self.queue_entry.grid(row=1, column=0, padx=10)
+        
+        self.queue_enqueue_btn = tk.Button(self.queue_frame, text="Enqueue", command=self.queue_enqueue, bg="#add8e6")  # Light blue
+        self.queue_enqueue_btn.grid(row=1, column=1, padx=10)
+        
+        self.queue_dequeue_btn = tk.Button(self.queue_frame, text="Dequeue", command=self.queue_dequeue, bg="#ffcccb")  # Light coral
+        self.queue_dequeue_btn.grid(row=1, column=2, padx=10)
+        
+        self.queue_display = tk.Label(self.queue_frame, text="", bg="#e6e6fa")
+        self.queue_display.grid(row=2, column=0, columnspan=3)
+        
+        # Priority Queue Frame
+        self.pqueue_frame = tk.Frame(self.root, bg="#e6e6fa")  # Lavender background for priority queue frame
+        self.pqueue_frame.pack(pady=10)
+        
+        self.pqueue_label = tk.Label(self.pqueue_frame, text="Priority Queue", font=("Arial", 14), bg="#e6e6fa")
+        self.pqueue_label.grid(row=0, column=0, columnspan=3)
+        
+        self.pqueue_entry = tk.Entry(self.pqueue_frame)
+        self.pqueue_entry.grid(row=1, column=0, padx=10)
+        
+        self.pqueue_priority_entry = tk.Entry(self.pqueue_frame)
+        self.pqueue_priority_entry.grid(row=1, column=1, padx=10)
+        self.pqueue_priority_entry.insert(0, "Priority")
+        
+        self.pqueue_insert_btn = tk.Button(self.pqueue_frame, text="Insert", command=self.pqueue_insert, bg="#add8e6")  # Light blue
+        self.pqueue_insert_btn.grid(row=1, column=2, padx=10)
+        
+        self.pqueue_dequeue_btn = tk.Button(self.pqueue_frame, text="Dequeue", command=self.pqueue_dequeue, bg="#ffcccb")  # Light coral
+        self.pqueue_dequeue_btn.grid(row=2, column=0, padx=10)
+        
+        self.pqueue_display = tk.Label(self.pqueue_frame, text="", bg="#e6e6fa")
+        self.pqueue_display.grid(row=3, column=0, columnspan=3)
+        
+        # Singly Linked List Frame
+        self.sll_frame = tk.Frame(self.root, bg="#e6e6fa")  # Lavender background for SLL frame
+        self.sll_frame.pack(pady=10)
+        
+        self.sll_label = tk.Label(self.sll_frame, text="Singly Linked List", font=("Arial", 14), bg="#e6e6fa")
+        self.sll_label.grid(row=0, column=0, columnspan=3)
+        
+        self.sll_entry = tk.Entry(self.sll_frame)
+        self.sll_entry.grid(row=1, column=0, padx=10)
+        
+        self.sll_insert_begin_btn = tk.Button(self.sll_frame, text="Insert at Beginning", command=self.sll_insert_at_beginning, bg="#add8e6")  # Light blue
+        self.sll_insert_begin_btn.grid(row=1, column=1, padx=10)
+        
+        self.sll_insert_end_btn = tk.Button(self.sll_frame, text="Insert at End", command=self.sll_insert_at_end, bg="#add8e6")  # Light blue
+        self.sll_insert_end_btn.grid(row=1, column=2, padx=10)
+        
+        self.sll_delete_begin_btn = tk.Button(self.sll_frame, text="Delete at Beginning", command=self.sll_delete_at_beginning, bg="#ffcccb")  # Light coral
+        self.sll_delete_begin_btn.grid(row=2, column=0, padx=10)
+        
+        self.sll_delete_end_btn = tk.Button(self.sll_frame, text="Delete at End", command=self.sll_delete_at_end, bg="#ffcccb")  # Light coral
+        self.sll_delete_end_btn.grid(row=2, column=1, padx=10)
+        
+        self.sll_display = tk.Label(self.sll_frame, text="", bg="#e6e6fa")
+        self.sll_display.grid(row=3, column=0, columnspan=3)
+        
+        # Doubly Linked List Frame
+        self.dll_frame = tk.Frame(self.root, bg="#e6e6fa")  # Lavender background for DLL frame
+        self.dll_frame.pack(pady=10)
+        
+        self.dll_label = tk.Label(self.dll_frame, text="Doubly Linked List", font=("Arial", 14), bg="#e6e6fa")
+        self.dll_label.grid(row=0, column=0, columnspan=3)
+        
+        self.dll_entry = tk.Entry(self.dll_frame)
+        self.dll_entry.grid(row=1, column=0, padx=10)
+        
+        self.dll_insert_begin_btn = tk.Button(self.dll_frame, text="Insert at Beginning", command=self.dll_insert_at_beginning, bg="#add8e6")  # Light blue
+        self.dll_insert_begin_btn.grid(row=1, column=1, padx=10)
+        
+        self.dll_insert_end_btn = tk.Button(self.dll_frame, text="Insert at End", command=self.dll_insert_at_end, bg="#add8e6")  # Light blue
+        self.dll_insert_end_btn.grid(row=1, column=2, padx=10)
+        
+        self.dll_delete_begin_btn = tk.Button(self.dll_frame, text="Delete at Beginning", command=self.dll_delete_at_beginning, bg="#ffcccb")  # Light coral
+        self.dll_delete_begin_btn.grid(row=2, column=0, padx=10)
+        
+        self.dll_delete_end_btn = tk.Button(self.dll_frame, text="Delete at End", command=self.dll_delete_at_end, bg="#ffcccb")  # Light coral
+        self.dll_delete_end_btn.grid(row=2, column=1, padx=10)
+        
+        self.dll_display = tk.Label(self.dll_frame, text="", bg="#e6e6fa")
+        self.dll_display.grid(row=3, column=0, columnspan=3)
+
+    # Stack Methods
+    def stack_push(self):
+        data = self.stack_entry.get()
+        self.stack.push(data)
+        self.stack_display.config(text=f"Stack: {self.stack.items}")
+        self.stack_entry.delete(0, tk.END)
+
+    def stack_pop(self):
+        popped = self.stack.pop()
+        if popped is None:
+            messagebox.showerror("Error", "Stack is empty.")
+        else:
+            self.stack_display.config(text=f"Stack: {self.stack.items}")
+
+    def stack_peek(self):
+        peeked = self.stack.peek()
+        if peeked is None:
+            messagebox.showerror("Error", "Stack is empty.")
+        else:
+            messagebox.showinfo("Peek", f"Top item: {peeked}")
+
+    def stack_size(self):
+        size = self.stack.size()
+        messagebox.showinfo("Size", f"Stack size: {size}")
+
+    # Queue Methods
+    def queue_enqueue(self):
+        data = self.queue_entry.get()
+        self.queue.enqueue(data)
+        self.queue_display.config(text=f"Queue: {self.queue.queue}")
+        self.queue_entry.delete(0, tk.END)
+
+    def queue_dequeue(self):
+        dequeued = self.queue.dequeue()
+        if dequeued is None:
+            messagebox.showerror("Error", "Queue is empty.")
+        else:
+            self.queue_display.config(text=f"Queue: {self.queue.queue}")
+
+    # Priority Queue Methods
+    def pqueue_insert(self):
+        data = self.pqueue_entry.get()
+        priority = self.pqueue_priority_entry.get()
+        if not priority.isdigit():
+            messagebox.showerror("Error", "Priority must be an integer.")
+            return
+        self.priority_queue.insert(data, int(priority))
+        self.pqueue_display.config(text=f"Priority Queue: {[item for _, item in self.priority_queue.pqueue]}")
+        self.pqueue_entry.delete(0, tk.END)
+        self.pqueue_priority_entry.delete(0, tk.END)
+
+    def pqueue_dequeue(self):
+        dequeued = self.priority_queue.dequeue()
+        if dequeued is None:
+            messagebox.showerror("Error", "Priority Queue is empty.")
+        else:
+            self.pqueue_display.config(text=f"Priority Queue: {[item for _, item in self.priority_queue.pqueue]}")
+
+    # Singly Linked List Methods
+    def sll_insert_at_beginning(self):
+        data = self.sll_entry.get()
+        self.singly_linked_list.insert_at_beginning(data)
+        self.sll_display.config(text=self.get_sll_items())
+        self.sll_entry.delete(0, tk.END)
+
+    def sll_insert_at_end(self):
+        data = self.sll_entry.get()
+        self.singly_linked_list.insert_at_end(data)
+        self.sll_display.config(text=self.get_sll_items())
+        self.sll_entry.delete(0, tk.END)
+
+    def sll_delete_at_beginning(self):
+        deleted = self.singly_linked_list.delete_at_beginning()
+        if deleted is None:
+            messagebox.showerror("Error", "Singly Linked List is empty.")
+        else:
+            self.sll_display.config(text=self.get_sll_items())
+
+    def sll_delete_at_end(self):
+        deleted = self.singly_linked_list.delete_at_end()
+        if deleted is None:
+            messagebox.showerror("Error", "Singly Linked List is empty.")
+        else:
+            self.sll_display.config(text=self.get_sll_items())
+
+    def get_sll_items(self):
+        items = []
+        current = self.singly_linked_list.head
+        while current:
+            items.append(current.data)
+            current = current.next
+        return " -> ".join(items)
+
+    # Doubly Linked List Methods
+    def dll_insert_at_beginning(self):
+        data = self.dll_entry.get()
+        self.doubly_linked_list.insert_at_beginning(data)
+        self.dll_display.config(text=self.get_dll_items())
+        self.dll_entry.delete(0, tk.END)
+
+    def dll_insert_at_end(self):
+        data = self.dll_entry.get()
+        self.doubly_linked_list.insert_at_end(data)
+        self.dll_display.config(text=self.get_dll_items())
+        self.dll_entry.delete(0, tk.END)
+
+    def dll_delete_at_beginning(self):
+        deleted = self.doubly_linked_list.delete_at_beginning()
+        if deleted is None:
+            messagebox.showerror("Error", "Doubly Linked List is empty.")
+        else:
+            self.dll_display.config(text=self.get_dll_items())
+
+    def dll_delete_at_end(self):
+        deleted = self.doubly_linked_list.delete_at_end()
+        if deleted is None:
+            messagebox.showerror("Error", "Doubly Linked List is empty.")
+        else:
+            self.dll_display.config(text=self.get_dll_items())
+
+    def get_dll_items(self):
+        items = []
+        current = self.doubly_linked_list.head
+        while current:
+            items.append(current.data)
+            current = current.next
+        return " <-> ".join(items)
+
+# Main execution
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = DataStructureGUI(root)
+    root.mainloop()
+#CODE 2
+
+import tkinter as tk
+from tkinter import messagebox
+import networkx as nx
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from collections import defaultdict
+
+# Function to perform BFS and return the BFS tree
+def bfs(graph, start_node):
+    bfs_tree = nx.Graph()
+    visited = set()
+    queue = [start_node]
+
+    while queue:
+        node = queue.pop(0)
+        if node not in visited:
+            visited.add(node)
+            bfs_tree.add_node(node)
+            for neighbor in graph.neighbors(node):
+                if neighbor not in visited:
+                    bfs_tree.add_edge(node, neighbor)
+                    queue.append(neighbor)
+
+    return bfs_tree
+
+# Graph class to manage the graph structure
+class Graph:
+    def __init__(self):
+        self.graph = defaultdict(list)
+
+    def add_vertex(self, vertex):
+        if vertex not in self.graph:
+            self.graph[vertex] = []
+
+    def add_edge(self, vertex1, vertex2):
+        if vertex1 in self.graph and vertex2 in self.graph:
+            self.graph[vertex1].append(vertex2)
+            self.graph[vertex2].append(vertex1)
+
+    def remove_vertex(self, vertex):
+        if vertex in self.graph:
+            for adjacent in self.graph[vertex]:
+                self.graph[adjacent].remove(vertex)
+            del self.graph[vertex]
+
+    def remove_edge(self, vertex1, vertex2):
+        if vertex1 in self.graph and vertex2 in self.graph[vertex1]:
+            self.graph[vertex1].remove(vertex2)
+            self.graph[vertex2].remove(vertex1)
+
+    def dfs_tree(self, start):
+        visited = set()
+        dfs_tree = defaultdict(list)
+
+        def dfs(vertex):
+            visited.add(vertex)
+            for neighbor in self.graph[vertex]:
+                if neighbor not in visited:
+                    dfs_tree[vertex].append(neighbor)
+                    dfs(neighbor)
+
+        dfs(start)
+        return dfs_tree
+
+    def visualize(self, bfs_tree=None, dfs_tree=None):
+        G = nx.Graph(self.graph)
+        pos = nx.spring_layout(G)
+        fig, ax = plt.subplots(1, 2, figsize=(12, 6))
+
+        # Draw the original graph with colors
+        nx.draw(G, pos, with_labels=True, node_color='lightblue', edge_color='gray',
+                node_size=800, font_size=12, font_weight='bold', ax=ax[0])
+        ax[0].set_title("Graph")
+
+        # Draw the BFS Tree if present
+        if bfs_tree:
+            pos_bfs = nx.spring_layout(bfs_tree)
+            nx.draw(bfs_tree, pos_bfs, with_labels=True, node_color='lightgreen', edge_color='blue',
+                    node_size=800, font_size=12, font_weight='bold', ax=ax[1])
+            ax[1].set_title("BFS Tree")
+
+        # Draw the DFS Tree if present
+        if dfs_tree:
+            T = nx.DiGraph(dfs_tree)
+            pos_tree = nx.spring_layout(T)
+            nx.draw(T, pos_tree, with_labels=True, node_color='pink', edge_color='red',
+                    node_size=800, font_size=12, font_weight='bold', arrows=True, ax=ax[1])
+            ax[1].set_title("DFS Tree")
+
+        return fig
+
+# GUI class to handle user interactions
+class GraphApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Advanced Graph Visualization App")
+        self.root.geometry("900x700")
+        
+        # Set backdrop color
+        self.root.configure(bg='#f0f8ff')
+
+        self.graph = Graph()
+
+        # Labels and inputs for adding vertices and edges
+        self.vertex_label = tk.Label(root, text="Vertex:", font=("Helvetica", 14), bg='lightgray')
+        self.vertex_label.pack(pady=5)
+        self.vertex_entry = tk.Entry(root, font=("Helvetica", 14), width=10)
+        self.vertex_entry.pack(pady=5)
+
+        self.add_vertex_button = tk.Button(root, text="Add Vertex", font=("Helvetica", 14), command=self.add_vertex, bg='lightblue')
+        self.add_vertex_button.pack(pady=5)
+
+        self.remove_vertex_button = tk.Button(root, text="Remove Vertex", font=("Helvetica", 14), command=self.remove_vertex, bg='lightcoral')
+        self.remove_vertex_button.pack(pady=5)
+
+        self.edge_label = tk.Label(root, text="Edge (vertex1 vertex2):", font=("Helvetica", 14), bg='lightgray')
+        self.edge_label.pack(pady=5)
+        self.edge_entry = tk.Entry(root, font=("Helvetica", 14), width=20)
+        self.edge_entry.pack(pady=5)
+
+        self.add_edge_button = tk.Button(root, text="Add Edge", font=("Helvetica", 14), command=self.add_edge, bg='lightblue')
+        self.add_edge_button.pack(pady=5)
+
+        self.remove_edge_button = tk.Button(root, text="Remove Edge", font=("Helvetica", 14), command=self.remove_edge, bg='lightcoral')
+        self.remove_edge_button.pack(pady=5)
+
+        # Entry for BFS and DFS
+        self.bfs_label = tk.Label(root, text="Start Node for BFS:", font=("Helvetica", 14), bg='lightgray')
+        self.bfs_label.pack(pady=5)
+        self.bfs_entry = tk.Entry(root, font=("Helvetica", 14))
+        self.bfs_entry.pack(pady=5)
+
+        self.dfs_label = tk.Label(root, text="Start Node for DFS:", font=("Helvetica", 14), bg='lightgray')
+        self.dfs_label.pack(pady=5)
+        self.dfs_entry = tk.Entry(root, font=("Helvetica", 14))
+        self.dfs_entry.pack(pady=5)
+
+        self.bfs_button = tk.Button(root, text="Perform BFS", font=("Helvetica", 14), command=self.perform_bfs, bg='lightgreen')
+        self.bfs_button.pack(pady=5)
+
+        self.dfs_button = tk.Button(root, text="Perform DFS", font=("Helvetica", 14), command=self.perform_dfs, bg='lightgreen')
+        self.dfs_button.pack(pady=5)
+
+        # Display graph button
+        self.display_button = tk.Button(root, text="Display Graph", font=("Helvetica", 14), command=self.display_graph, bg='lightblue')
+        self.display_button.pack(pady=20)
+
+        # Canvas for matplotlib graph visualization
+        self.canvas_frame = tk.Frame(root)
+        self.canvas_frame.pack(fill=tk.BOTH, expand=True)
+
+    def add_vertex(self):
+        vertex = self.vertex_entry.get().strip()
+        if vertex:
+            self.graph.add_vertex(vertex)
+            messagebox.showinfo("Success", f"Vertex '{vertex}' added.")
+        else:
+            messagebox.showwarning("Warning", "Vertex name cannot be empty.")
+        self.vertex_entry.delete(0, tk.END)
+
+    def remove_vertex(self):
+        vertex = self.vertex_entry.get().strip()
+        if vertex:
+            self.graph.remove_vertex(vertex)
+            messagebox.showinfo("Success", f"Vertex '{vertex}' removed.")
+        else:
+            messagebox.showwarning("Warning", "Vertex name cannot be empty.")
+        self.vertex_entry.delete(0, tk.END)
+
+    def add_edge(self):
+        edge = self.edge_entry.get().strip().split()
+        if len(edge) == 2:
+            vertex1, vertex2 = edge
+            self.graph.add_edge(vertex1, vertex2)
+            messagebox.showinfo("Success", f"Edge '{vertex1} -- {vertex2}' added.")
+        else:
+            messagebox.showwarning("Warning", "Please enter two valid vertices.")
+        self.edge_entry.delete(0, tk.END)
+
+    def remove_edge(self):
+        edge = self.edge_entry.get().strip().split()
+        if len(edge) == 2:
+            vertex1, vertex2 = edge
+            self.graph.remove_edge(vertex1, vertex2)
+            messagebox.showinfo("Success", f"Edge '{vertex1} -- {vertex2}' removed.")
+        else:
+            messagebox.showwarning("Warning", "Please enter two valid vertices.")
+        self.edge_entry.delete(0, tk.END)
+
+    def perform_bfs(self):
+        start_node = self.bfs_entry.get().strip()
+        if start_node:
+            if start_node in self.graph.graph:
+                bfs_tree = bfs(self.graph.graph, start_node)
+                self.display_graph(bfs_tree=bfs_tree)
+            else:
+                messagebox.showerror("Invalid Node", f"Start node '{start_node}' is not present in the graph.")
+        else:
+            messagebox.showwarning("Warning", "Please enter a start node for BFS.")
+        self.bfs_entry.delete(0, tk.END)
+
+    def perform_dfs(self):
+        start_node = self.dfs_entry.get().strip()
+        if start_node:
+            if start_node in self.graph.graph:
+                dfs_tree = self.graph.dfs_tree(start_node)
+                self.display_graph(dfs_tree=dfs_tree)
+            else:
+                messagebox.showerror("Invalid Node", f"Start node '{start_node}' is not present in the graph.")
+        else:
+            messagebox.showwarning("Warning", "Please enter a start node for DFS.")
+        self.dfs_entry.delete(0, tk.END)
+
+    def display_graph(self, bfs_tree=None, dfs_tree=None):
+        """Display the graph and BFS/DFS tree in the GUI using matplotlib."""
+        fig = self.graph.visualize(bfs_tree=bfs_tree, dfs_tree=dfs_tree)
+
+        # Clear the previous canvas if it exists
+        for widget in self.canvas_frame.winfo_children():
+            widget.destroy()
+
+        # Create a new canvas for the figure
+        canvas = FigureCanvasTkAgg(fig, master=self.canvas_frame)
+        canvas.draw()
+        canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
+# Running the application
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = GraphApp(root)
+    root.mainloop()
+
+#CODE 3
+
+import tkinter as tk
+from tkinter import messagebox
+from collections import Counter
+import heapq
+from itertools import permutations
+import math
+
+# Node and Binary Tree for BST
+class Node:
+    def __init__(self, key):
+        self.left = None
+        self.right = None
+        self.val = key
+
+class BinaryTree:
+    def __init__(self):
+        self.root = None
+
+    def insert(self, key):
+        if self.root is None:
+            self.root = Node(key)
+        else:
+            self._insert(self.root, key)
+
+    def _insert(self, root, key):
+        if key < root.val:
+            if root.left is None:
+                root.left = Node(key)
+            else:
+                self._insert(root.left, key)
+        else:
+            if root.right is None:
+                root.right = Node(key)
+            else:
+                self._insert(root.right, key)
+
+    def inorder_traversal(self):
+        return self._inorder_traversal(self.root)
+
+    def _inorder_traversal(self, root):
+        res = []
+        if root:
+            res = self._inorder_traversal(root.left)
+            res.append(root.val)
+            res = res + self._inorder_traversal(root.right)
+        return res
+
+# Huffman Coding
+class HuffmanNode:
+    def __init__(self, char=None, freq=None):
+        self.char = char
+        self.freq = freq
+        self.left = None
+        self.right = None
+
+    def __lt__(self, other):
+        return self.freq < other.freq
+
+def build_huffman_tree(frequencies):
+    heap = [HuffmanNode(char, freq) for char, freq in frequencies.items()]
+    heapq.heapify(heap)
+
+    while len(heap) > 1:
+        left = heapq.heappop(heap)
+        right = heapq.heappop(heap)
+        merged = HuffmanNode(freq=left.freq + right.freq)
+        merged.left = left
+        merged.right = right
+        heapq.heappush(heap, merged)
+
+    return heap[0]
+
+def generate_codes(node, prefix="", codebook={}):
+    if node:
+        if node.char is not None:
+            codebook[node.char] = prefix
+        generate_codes(node.left, prefix + "0", codebook)
+        generate_codes(node.right, prefix + "1", codebook)
+    return codebook
+
+def huffman_encoding(data):
+    if not data:
+        return "", {}
+
+    frequencies = Counter(data)
+    root = build_huffman_tree(frequencies)
+    codebook = generate_codes(root)
+    encoded_data = ''.join(codebook[char] for char in data)
+
+    return encoded_data, codebook
+
+def huffman_decoding(encoded_data, codebook):
+    reverse_codebook = {v: k for k, v in codebook.items()}
+    decoded_data = ""
+    current_code = ""
+
+    for bit in encoded_data:
+        current_code += bit
+        if current_code in reverse_codebook:
+            decoded_data += reverse_codebook[current_code]
+            current_code = ""
+
+    return decoded_data
+
+# Traveling Salesman Problem
+class TSP:
+    def __init__(self, distance_matrix):
+        self.distance_matrix = distance_matrix
+        self.num_cities = len(distance_matrix)
+
+    def calculate_total_distance(self, route):
+        total_distance = 0
+        for i in range(len(route) - 1):
+            total_distance += self.distance_matrix[route[i]][route[i + 1]]
+        total_distance += self.distance_matrix[route[-1]][route[0]]
+        return total_distance
+
+    def solve(self):
+        min_distance = math.inf
+        best_route = None
+        for perm in permutations(range(self.num_cities)):
+            current_distance = self.calculate_total_distance(perm)
+            if current_distance < min_distance:
+                min_distance = current_distance
+                best_route = perm
+        return best_route, min_distance
+
+# Hash Table with Separate Chaining
+class HashTable:
+    def __init__(self, size):
+        self.size = size
+        self.table = [None] * size
+
+    def hash_function(self, key):
+        return key % self.size
+
+    def insert(self, key, value):
+        index = self.hash_function(key)
+        new_node = Node(key, value)
+
+        if self.table[index] is None:
+            self.table[index] = new_node
+        else:
+            current = self.table[index]
+            while current.next:
+                current = current.next
+            current.next = new_node
+
+    def delete(self, key):
+        index = self.hash_function(key)
+        current = self.table[index]
+        prev = None
+
+        while current:
+            if current.key == key:
+                if prev:
+                    prev.next = current.next
+                else:
+                    self.table[index] = current.next
+                return
+            prev = current
+            current = current.next
+
+    def search(self, key):
+        index = self.hash_function(key)
+        current = self.table[index]
+
+        while current:
+            if current.key == key:
+                return current.value
+            current = current.next
+
+        return None
+
+    def traverse(self):
+        items = []
+        for index, node in enumerate(self.table):
+            current = node
+            while current:
+                items.append(f"Index {index}: Key {current.key}, Value {current.value}")
+                current = current.next
+        return items
+
+# GUI Implementation
+class DataStructuresGUI:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Data Structures GUI")
+        self.root.geometry("600x600")
+        self.root.configure(bg="#f0f8ff")  # Light gray background
+
+        # Increased Font Size
+        self.font_size = 14
+        self.create_bst_section()
+        self.create_huffman_section()
+        self.create_tsp_section()
+        self.create_hash_table_section()
+
+    def create_bst_section(self):
+        bst_frame = tk.Frame(self.root, bg="#f0f8ff")  # Light blue background
+        bst_frame.pack(pady=10, fill=tk.X)
+
+        tk.Label(bst_frame, text="Binary Search Tree", font=("Arial", self.font_size), bg="lavender").pack()
+
+        self.bst_input = tk.Entry(bst_frame, font=("Arial", self.font_size))
+        self.bst_input.pack(pady=5)
+        tk.Button(bst_frame, text="Insert", command=self.insert_bst, font=("Arial", self.font_size), bg="#5cb85c", fg="white").pack(pady=5)
+        tk.Button(bst_frame, text="Inorder Traversal", command=self.display_bst, font=("Arial", self.font_size), bg="#5bc0de", fg="white").pack(pady=5)
+
+        self.bst_tree = BinaryTree()
+
+    def insert_bst(self):
+        key = self.bst_input.get()
+        if key.isdigit():
+            self.bst_tree.insert(int(key))
+            messagebox.showinfo("Success", f"Inserted {key} into BST.")
+        else:
+            messagebox.showerror("Error", "Please enter a valid integer key.")
+
+    def display_bst(self):
+        result = self.bst_tree.inorder_traversal()
+        messagebox.showinfo("BST Inorder Traversal", f"Inorder: {result}")
+
+    def create_huffman_section(self):
+        huffman_frame = tk.Frame(self.root, bg="#f0f8ff")  # Light yellow background
+        huffman_frame.pack(pady=10, fill=tk.X)
+
+        tk.Label(huffman_frame, text="Huffman Coding", font=("Arial", self.font_size), bg="#fff3cd").pack()
+
+        self.huffman_input = tk.Entry(huffman_frame, font=("Arial", self.font_size))
+        self.huffman_input.pack(pady=5)
+        tk.Button(huffman_frame, text="Encode", command=self.encode_huffman, font=("Arial", self.font_size), bg="#f0ad4e", fg="white").pack(pady=5)
+
+    def encode_huffman(self):
+        data = self.huffman_input.get()
+        encoded_data, codebook = huffman_encoding(data)
+        messagebox.showinfo("Huffman Encoding", f"Encoded: {encoded_data}\nCodebook: {codebook}")
+
+    def create_tsp_section(self):
+        tsp_frame = tk.Frame(self.root, bg="#f0f8ff")  # Light green background
+        tsp_frame.pack(pady=10, fill=tk.X)
+
+        tk.Label(tsp_frame, text="Traveling Salesman Problem", font=("Arial", self.font_size), bg="#dff0d8").pack()
+
+        tk.Button(tsp_frame, text="Solve TSP", command=self.solve_tsp, font=("Arial", self.font_size), bg="#5bc0de", fg="white").pack(pady=5)
+
+        # Example distance matrix
+        self.tsp_solver = TSP([[0, 10, 15, 20],
+                                [10, 0, 35, 25],
+                                [15, 35, 0, 30],
+                                [20, 25, 30, 0]])
+
+    def solve_tsp(self):
+        route, distance = self.tsp_solver.solve()
+        messagebox.showinfo("TSP Solution", f"Best Route: {route}\nDistance: {distance}")
+
+    def create_hash_table_section(self):
+        hash_frame = tk.Frame(self.root, bg="#f0f8ff")  # Light red background
+        hash_frame.pack(pady=10, fill=tk.X)
+
+        tk.Label(hash_frame, text="Hash Table", font=("Arial", self.font_size), bg="#f2dede").pack()
+
+        self.hash_key_input = tk.Entry(hash_frame, font=("Arial", self.font_size))
+        self.hash_key_input.pack(pady=5)
+        self.hash_value_input = tk.Entry(hash_frame, font=("Arial", self.font_size))
+        self.hash_value_input.pack(pady=5)
+
+        tk.Button(hash_frame, text="Insert", command=self.hash_insert, font=("Arial", self.font_size), bg="#5cb85c", fg="white").pack(pady=5)
+        tk.Button(hash_frame, text="Search", command=self.hash_search, font=("Arial", self.font_size), bg="#5bc0de", fg="white").pack(pady=5)
+
+        self.hash_table = HashTable(size=10)
+
+    def hash_insert(self):
+        key = self.hash_key_input.get()
+        value = self.hash_value_input.get()
+        if key.isdigit():
+            self.hash_table.insert(int(key), value)
+            messagebox.showinfo("Success", f"Inserted {value} with key {key}.")
+        else:
+            messagebox.showerror("Error", "Please enter a valid integer key.")
+
+    def hash_search(self):
+        key = self.hash_key_input.get()
+        if key.isdigit():
+            value = self.hash_table.search(int(key))
+            if value is not None:
+                messagebox.showinfo("Search Result", f"Value: {value}")
+            else:
+                messagebox.showinfo("Search Result", "Key not found.")
+        else:
+            messagebox.showerror("Error", "Please enter a valid integer key.")
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = DataStructuresGUI(root)
+    root.mainloop()
